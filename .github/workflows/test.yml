@@ -55,5 +55,5 @@ jobs:
       commitish: ${{ github.sha }}
       override_latest: false
     secrets:
-      AUTOMETRICS_DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_TOKEN }}
-      AUTOMETRICS_DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_USERNAME }}
+      AUTOMETRICS_DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      AUTOMETRICS_DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
