@@ -1,0 +1,2 @@
+[build]
+pre-build = ["apt-get update && apt-get install protobuf-compiler -y"] # we need protoc to compile api

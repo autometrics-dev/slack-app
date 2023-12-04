@@ -1,0 +1,21 @@
+# Create a release image based on Debian with support for multiple architectures
+# Use the context that contains the binaries in the `$OS/$ARCH/` structure.
+# NOTE: Windows is currently not supported
+
+FROM debian:bookworm-slim
+
+# These variables _should_ be set by docker buildx
+ARG TARGETARCH
+ARG TARGETOS
+
+RUN apt-get update \
+    && apt-get install -y --force-yes --no-install-recommends ca-certificates \
+    && apt-get clean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ${TARGETOS}/${TARGETARCH}/slack-app /app/slack-app
+
+EXPOSE 3031
+WORKDIR "/app/"
+ENTRYPOINT ["/app/slack-app"]

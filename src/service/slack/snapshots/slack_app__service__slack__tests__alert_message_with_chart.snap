@@ -1,0 +1,13 @@
+---
+source: slack-app/src/service/slack/tests.rs
+expression: message
+---
+blocks:
+  - type: section
+    fields:
+      - type: mrkdwn
+        text: ":white_check_mark: ~High Error Rate for \"api\" [environment=production]~"
+  - type: image
+    image_url: "http://localhost:3031/api/chart/1234"
+    alt_text: alert chart
+

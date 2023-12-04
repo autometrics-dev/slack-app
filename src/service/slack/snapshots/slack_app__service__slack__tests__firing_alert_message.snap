@@ -1,0 +1,10 @@
+---
+source: slack-app/src/service/slack/tests.rs
+expression: message
+---
+blocks:
+  - type: section
+    fields:
+      - type: mrkdwn
+        text: ":rotating_light: High Error Rate for \"api\" [environment=production]"
+

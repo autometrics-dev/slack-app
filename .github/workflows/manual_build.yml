@@ -1,0 +1,32 @@
+---
+name: Manual slack app build
+
+on:
+  workflow_dispatch:
+    inputs:
+      commitish:
+        description: Override the commit-ish to build (defaults to HEAD of the selected branch)
+        required: false
+        default: ""
+        type: string
+      override_latest:
+        description: Whether to override the latest tag in the image registry
+        required: true
+        default: false
+        type: boolean
+      version:
+        description: The version to publish (no "v" prefix, leave empty to publish under the commit hash of commitish)
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  create-build:
+    uses: ./.github/workflows/build.yml
+    with:
+      commitish: ${{ inputs.commitish || github.sha }}
+      override_latest: ${{ inputs.override_latest }}
+      version: ${{ inputs.version }}
+    secrets:
+      AUTOMETRICS_DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_TOKEN }}
+      AUTOMETRICS_DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_USERNAME }}

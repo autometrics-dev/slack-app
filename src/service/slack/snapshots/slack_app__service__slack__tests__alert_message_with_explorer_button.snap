@@ -1,0 +1,21 @@
+---
+source: slack-app/src/service/slack/tests.rs
+expression: message
+---
+blocks:
+  - type: section
+    fields:
+      - type: mrkdwn
+        text: ":white_check_mark: ~High Error Rate for \"api\" [environment=production]~"
+  - type: image
+    image_url: "http://localhost:3031/api/chart/1234"
+    alt_text: alert chart
+  - type: actions
+    elements:
+      - type: button
+        action_id: open_in_explorer
+        text:
+          type: plain_text
+          text: Open in Explorer
+        url: "http://explorer.pmmp.dev/?prometheusUrl=http://localhost:9090/prometheus#/slos/api/successRate?from=1969-12-31T18:00:00Z&to=1970-01-01T00:00:00Z"
+

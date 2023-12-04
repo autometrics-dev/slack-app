@@ -1,0 +1,35 @@
+release.json
+
+# Rust targets
+**/target
+target
+
+# used for xtask tokens
+.env
+
+# Mac
+.DS_Store
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+*.code-workspace
+
+# CLion
+.idea
+
+# TypeScript / Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+node_modules
+package-lock.json
+yarn-error.log
+
+# Build tools
+.parcel-cache*
+.nx/cache
+*.tsbuildinfo
