@@ -179,7 +179,7 @@ fn build_message(
     };
 
     let header_block = SlackSectionBlock::new().with_text(SlackBlockText::Plain(
-        SlackBlockPlainText::new(header_text.into()).with_emoji(true),
+        SlackBlockPlainText::new(header_text).with_emoji(true),
     ));
 
     let severity_text = match alert.severity.as_deref() {
@@ -190,7 +190,7 @@ fn build_message(
     };
 
     let description_block = SlackSectionBlock::new()
-        .with_text(SlackBlockMarkDownText::new(alert.text.clone().into()).into())
+        .with_text(SlackBlockMarkDownText::new(alert.text.clone()).into())
         .with_fields(vec![
             SlackBlockMarkDownText::new(format!("*Severity*\n{}", severity_text)).into(),
             SlackBlockMarkDownText::new(format!("*Created*\n{}", alert.created_at)).into(),
@@ -221,7 +221,7 @@ fn build_message(
         );
         let explorer_block: SlackBlock = SlackSectionBlock::new()
             .with_text(SlackBlockText::MarkDown(SlackBlockMarkDownText::new(
-                description.into(),
+                description,
             )))
             .with_accessory(
                 SlackBlockButtonElement::new("open_in_explorer".into(), "Open".into())
@@ -240,7 +240,7 @@ fn build_message(
         chart_block,
         actions_block,
     ];
-    let blocks: Vec<SlackBlock> = blocks_maybe.into_iter().filter_map(|block| block).collect();
+    let blocks: Vec<SlackBlock> = blocks_maybe.into_iter().flatten().collect();
 
     let attachment = SlackMessageAttachment::new()
         .with_color(color)
