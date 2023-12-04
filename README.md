@@ -24,7 +24,7 @@ To release a development images, leave the `version` input empty. Alternatively,
 to release a production image, set a value to the `version` input (excluding the
 `v` prefix).
 
-It is both possible to trigger this process using the [GitHub web UI](https://github.com/fiberplane/monofiber/actions/workflows/manual_slack_app_build.yml)
+It is both possible to trigger this process using the [GitHub web UI](https://github.com/autometrics/slack-app/actions/workflows/manual_build.yml)
 (then select "run workflow") or using the [GitHub CLI](https://cli.github.com/).
 
 ### Examples
@@ -32,16 +32,17 @@ It is both possible to trigger this process using the [GitHub web UI](https://gi
 Release a development image based on a branch:
 
 ```
-gh workflow run manual_slack_app_build.yml \
+gh workflow run manual_build.yml \
     -f commitish=slack_app_ci_fixes
 ```
 
 Release a production image based on a specific commit:
 
 ```
-gh workflow run manual_slack_app_build.yml \
+gh workflow run manual_build.yml \
     -f commitish=c0feee07f5cfc3d02339e42d8ecdb5eab9db3192 \
-    -f version=1.0.0
+    -f version=1.0.0 \
+    -f override_latest=true
 ```
 
 ### Known limitations

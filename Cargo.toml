@@ -1,6 +1,6 @@
 [package]
 name = "slack-app"
-version = "0.3.0"
+version = "1.0.0"
 authors = ["Fiberplane"]
 edition = "2021"
 build = "build.rs"
