@@ -88,6 +88,11 @@ impl AlertStatus {
 }
 
 fn create_alert_text(alert: &AlertmanagerAlert, payload: &AlertmanagerWebhookPayload) -> String {
+    // Alerts created from Sloth have a "summary" annotation that we can use
+    if let Some(summary) = alert.annotations.get("summary") {
+        return summary.to_owned();
+    }
+
     let get_label = |key| get_label(alert, payload, key);
 
     let mut text = match get_label("alertname") {

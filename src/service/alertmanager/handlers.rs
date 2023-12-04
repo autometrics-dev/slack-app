@@ -58,6 +58,7 @@ pub async fn receive_alertmanager_webhook(
                 sloth_slo: get_label(alert, &payload, "sloth_slo").map(str::to_owned),
                 sloth_service: get_label(alert, &payload, "sloth_service").map(str::to_owned),
                 objective_name: get_label(alert, &payload, "objective_name").map(str::to_owned),
+                severity: get_label(alert, &payload, "severity").map(str::to_owned),
             };
 
             let db_alert = service.db.alert_create(&mut tx, new_alert).await?;

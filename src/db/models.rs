@@ -39,6 +39,9 @@ pub struct Alert {
     /// Optional name of the associated objective
     pub objective_name: Option<String>,
 
+    /// Optional severity of the alert.
+    pub severity: Option<String>,
+
     /// Timestamp at which the alert was created.
     pub created_at: OffsetDateTime,
 
@@ -79,4 +82,7 @@ pub struct NewAlert {
 
     /// Optional name of the associated objective
     pub objective_name: Option<String>,
+
+    /// Optional severity of the alert.
+    pub severity: Option<String>,
 }

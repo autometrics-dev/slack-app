@@ -164,40 +164,89 @@ fn build_message(
     explorer_url: Option<&Url>,
     alert: &Alert,
 ) -> Result<SlackMessageContent, SlackServiceError> {
-    let text = if alert.resolved {
-        format!(":white_check_mark: ~{text}~", text = alert.text)
+    let color = if alert.resolved {
+        // Green
+        "#2EC95A".to_owned()
     } else {
-        format!(":rotating_light: {text}", text = alert.text)
+        // Red
+        "#F2303C".to_owned()
     };
 
-    let mut content = SlackMessageContent::new().with_blocks(vec![SlackSectionBlock::new()
-        .with_fields(vec![SlackBlockMarkDownText::new(text).into()])
-        .into()]);
+    let header_text = if alert.resolved {
+        ":white_check_mark: Alert was resolved".to_owned()
+    } else {
+        ":rotating_light: Alert is firing".to_owned()
+    };
 
-    if alert.chart_filename.is_some() {
-        content.blocks.as_mut().unwrap().push(
-            SlackImageBlock::new(
-                service_base_url
-                    .join(&format!("/api/chart/{}", alert.id))
-                    .unwrap(),
-                "alert chart".to_owned(),
-            )
-            .into(),
+    let header_block = SlackSectionBlock::new().with_text(SlackBlockText::Plain(
+        SlackBlockPlainText::new(header_text).with_emoji(true),
+    ));
+
+    let severity_text = match alert.severity.as_deref() {
+        Some("page") => ":pager: Page".to_owned(),
+        Some("ticket") => ":ticket: Ticket".to_owned(),
+        Some(severity) => format!(":question: {}", severity),
+        None => ":question: Unknown".to_owned(),
+    };
+
+    let description_block = SlackSectionBlock::new()
+        .with_text(SlackBlockMarkDownText::new(alert.text.clone()).into())
+        .with_fields(vec![
+            SlackBlockMarkDownText::new(format!("*Severity*\n{}", severity_text)).into(),
+            SlackBlockMarkDownText::new(format!("*Created*\n{}", alert.created_at)).into(),
+        ]);
+
+    let chart_block = if let Some(_chart_filename) = alert.chart_filename.as_ref() {
+        let section: SlackBlock = SlackImageBlock::new(
+            service_base_url
+                .join(&format!("/api/chart/{}", alert.id))
+                .unwrap(),
+            format!(
+                "Chart for slo `{}`",
+                alert.sloth_slo.as_deref().unwrap_or("unknown")
+            ),
+        )
+        .into();
+        Some(section)
+    } else {
+        None
+    };
+
+    let actions_block = if let Some(explorer_alert_url) =
+        get_explorer_alert_url(explorer_url, prometheus_url, alert)
+    {
+        let description = format!(
+            "Triage `{}` SLO in Explorer",
+            alert.sloth_slo.as_deref().unwrap_or("unknown")
         );
-    }
+        let explorer_block: SlackBlock = SlackSectionBlock::new()
+            .with_text(SlackBlockText::MarkDown(SlackBlockMarkDownText::new(
+                description,
+            )))
+            .with_accessory(
+                SlackBlockButtonElement::new("open_in_explorer".into(), "Open".into())
+                    .with_url(explorer_alert_url)
+                    .into(),
+            )
+            .into();
+        Some(explorer_block)
+    } else {
+        None
+    };
 
-    if let Some(blocks) = content.blocks.as_mut() {
-        if let Some(explorer_alert_url) =
-            get_explorer_alert_url(explorer_url, prometheus_url, alert)
-        {
-            let buttons = vec![SlackActionBlockElement::Button(
-                SlackBlockButtonElement::new("open_in_explorer".into(), "Open in Explorer".into())
-                    .with_url(explorer_alert_url),
-            )];
+    let blocks_maybe: Vec<Option<SlackBlock>> = vec![
+        Some(header_block.into()),
+        Some(description_block.into()),
+        chart_block,
+        actions_block,
+    ];
+    let blocks: Vec<SlackBlock> = blocks_maybe.into_iter().flatten().collect();
 
-            blocks.push(SlackBlock::Actions(SlackActionsBlock::new(buttons)))
-        }
-    }
+    let attachment = SlackMessageAttachment::new()
+        .with_color(color)
+        .with_blocks(blocks);
+
+    let content = SlackMessageContent::new().with_attachments(vec![attachment]);
 
     Ok(content)
 }
