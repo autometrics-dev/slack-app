@@ -96,13 +96,14 @@ impl ChartService {
 
         let chart_options = ChartOptions {
             width: 1180,
-            height: 800,
+            height: 400,
             area_gradient_shown: false,
             axis_lines_shown: true,
             grid_columns_shown: true,
             grid_rows_shown: true,
             grid_stroke_color: GRID_STROKE_COLOR,
             grid_stroke_dasharray: Default::default(),
+            shape_stroke_width: Some(4.0),
             get_shape_list_color: &get_shape_list_color,
             tick_color: TICK_COLOR,
             x_formatter: Some(FormatterKind::Time),

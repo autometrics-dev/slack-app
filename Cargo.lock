@@ -1805,9 +1805,9 @@ dependencies = [
 
 [[package]]
 name = "mondrian-charts"
-version = "0.2.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97a68ad81e351fddb7489d1751ad8daad121c35b39d3455b3d1019ff7a83efff"
+checksum = "077ff59f206fce6c6d52f300a6c8bd239995f0ed21710d0b43a2fecdcc603ffd"
 dependencies = [
  "csscolorparser",
  "fiberplane-models",
@@ -3230,9 +3230,8 @@ dependencies = [
 
 [[package]]
 name = "slack-morphism"
-version = "1.14.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1e0ec085a88edf1acc4bd4270a2b724b4e57d599b7824d8e770da4e524353d8"
+version = "1.15.2-alpha.0"
+source = "git+https://github.com/actualwitch/slack-morphism-rust.git?branch=feature/add-attachments-blocks#500e4185b1bafac1f9328ade5fe8416ce46bc774"
 dependencies = [
  "async-recursion",
  "async-trait",

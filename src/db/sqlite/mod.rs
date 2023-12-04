@@ -22,8 +22,8 @@ impl Db {
     ) -> Result<Alert, DbError> {
         let now = OffsetDateTime::now_utc();
         let alert = sqlx::query_as(
-            "INSERT INTO alerts ( text, resolved, fingerprint, notebook_id, chart_filename, slack_channel, slack_ts, sloth_slo, sloth_service, objective_name, created_at, updated_at )
-             VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
+            "INSERT INTO alerts ( text, resolved, fingerprint, notebook_id, chart_filename, slack_channel, slack_ts, sloth_slo, sloth_service, objective_name, severity, created_at, updated_at )
+             VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 )
              RETURNING *",
         )
         .bind(&new_alert.text)
@@ -36,6 +36,7 @@ impl Db {
         .bind(new_alert.sloth_slo.as_ref())
         .bind(new_alert.sloth_service.as_ref())
         .bind(new_alert.objective_name.as_ref())
+        .bind(new_alert.severity.as_ref())
         .bind(now)
         .bind(now)
         .fetch_one(&mut **tx)
@@ -69,7 +70,7 @@ impl Db {
         fingerprint: &str,
     ) -> Result<Option<Alert>, DbError> {
         let alert = sqlx::query_as(
-            "SELECT id, text, resolved, fingerprint, notebook_id, chart_filename, slack_channel, slack_ts, sloth_slo, sloth_service, objective_name, created_at, updated_at
+            "SELECT id, text, resolved, fingerprint, notebook_id, chart_filename, slack_channel, slack_ts, sloth_slo, sloth_service, objective_name, severity, created_at, updated_at
              FROM alerts
              WHERE fingerprint = $1",
         )

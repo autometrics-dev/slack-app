@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS alerts
     sloth_service   TEXT          DEFAULT NULL,
     sloth_slo       TEXT          DEFAULT NULL,
     objective_name  TEXT          DEFAULT NULL,
+    severity        TEXT          DEFAULT NULL,
     created_at      TIMESTAMP     NOT NULL,
     updated_at      TIMESTAMP     NOT NULL
 );
