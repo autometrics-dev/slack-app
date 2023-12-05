@@ -1,59 +1,15 @@
 # slack-app
 
-This component is a Slack app that is used to send Alerts to a Slack channel. It also can render a chart for a given alert.
-
-## Release process
-
-There is a GitHub action that allows us to publish a Docker image to our
-internal AWS ECR registry and Docker Hub. There are two type of images that we
-can publish: development images and production images.
-
-The development images are intended for testing purposes. The Docker image tags
-for these images follow the following format: `dev-<short sha>`. These images
-are currently only published to our internal AWS ECR registry and will be purged
-after a certain period of time.
-
-The production images should be used by our users. The Docker image tags for
-these images follow the following format: `v<version>`. These images are
-published to both our internal AWS ECR registry and Docker Hub. These images
-will never be purged.
-
-For both images it is possible to override the `latest` tag.
-
-To release a development images, leave the `version` input empty. Alternatively,
-to release a production image, set a value to the `version` input (excluding the
-`v` prefix).
-
-It is both possible to trigger this process using the [GitHub web UI](https://github.com/autometrics/slack-app/actions/workflows/manual_build.yml)
-(then select "run workflow") or using the [GitHub CLI](https://cli.github.com/).
-
-### Examples
-
-Release a development image based on a branch:
-
-```
-gh workflow run manual_build.yml \
-    -f commitish=slack_app_ci_fixes
-```
-
-Release a production image based on a specific commit:
-
-```
-gh workflow run manual_build.yml \
-    -f commitish=c0feee07f5cfc3d02339e42d8ecdb5eab9db3192 \
-    -f version=1.0.0 \
-    -f override_latest=true
-```
-
-### Known limitations
-
-It is possible to deploy any version, even if these don't match the version of
-the Rust app. It is up to the tooling/discretion of the release engineer to
-ensure that these values match.
+This component is a Slack app that is used to send Alerts to a Slack channel. It
+also can render a chart for a given alert.
 
 ## How to Test Locally
 
-Use quickmetrics instead of `am`, since it includes `alertmanager` out of the box, and it's configured to send alerts to the Slack app on localhost:3031.
+To be able to test the slack-app locally you will need to expose a http service
+to the API servers of Slack, in this example we're using (`ngrok`)[https://ngrok.com/]
+to do so. We're also using `quickmetrics` instead of `am` since that includes
+`alertmanager`. We'll start by first retrieving quickmetrics and starting that
+using `docker-compose`.
 
 ```sh
 git clone git@github.com:autometrics-dev/quickmetrics.git
@@ -61,14 +17,19 @@ cd quickmetrics
 docker compose up --build
 ```
 
-Then, set up ngrok to be able to receive requests from Slack to your local machine and generate images.
+Next, we will set up ngrok to be able to receive requests from Slack to your
+local machine and retrieve the graphs (note: update the domain to your own
+unique domain):
 
 ```sh
 NGROK_DOMAIN=comic-dolphin-first.ngrok-free.app
 ngrok http --domain=$NGROK_DOMAIN 3031
 ```
 
-Then, launch the Slack app (get the bot token from our Slack dashboard)
+You will need to create and install a Slack app in your Slack workspace. See the
+instructions in the [autometrics docs](TODO). Then we will start the slack-app
+on your local machine (note: be sure to update the `SLACK_BOT_TOKEN` and
+`SLACK_CHANNEL`):
 
 ```sh
 STORAGE_DIR=/tmp \
@@ -81,9 +42,10 @@ STORAGE_DIR=/tmp \
   cargo run
 ```
 
-If you have an app running with quickmetrics that's generating alerts, then all this should work.
+If you have an app running with quickmetrics that's generating alerts, then all
+this should work.
 
-When I was testing, I used the python fastapi animals api, which should be running on port 8080. This will get scraped automagically by Prometheus.
+To be able to quickly trigger a alert you can also use the following sample app:
 
 ```sh
 git clone git@github.com:autometrics-dev/autometrics-demo-python-fastapi-animals.git
@@ -94,7 +56,8 @@ pip install -r requirements.txt
 uvicorn app:app --reload --port=8080
 ```
 
-There's a script in that repo for generating traffic. Alerts will start firing after a few minutes:
+Once that is running, it should be scraped by quickmetrics and if you run the
+traffic generate script it should fire alerts in a couple of minutes:
 
 ```sh
 ./generate-traffic.sh
