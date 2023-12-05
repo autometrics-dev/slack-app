@@ -27,9 +27,9 @@ ngrok http --domain=$NGROK_DOMAIN 3031
 ```
 
 You will need to create and install a Slack app in your Slack workspace. See the
-instructions in the [autometrics docs](TODO). Then we will start the slack-app
-on your local machine (note: be sure to update the `SLACK_BOT_TOKEN` and
-`SLACK_CHANNEL`):
+instructions in the [autometrics docs](http://docs.autometrics.dev/deploying-alertmanager/kubernetes).
+Then we will start the slack-app on your local machine (note: be sure to update
+the `SLACK_BOT_TOKEN` and `SLACK_CHANNEL`):
 
 ```sh
 STORAGE_DIR=/tmp \
